@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use GuzzleHttp\Psr7\Query;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
@@ -115,7 +116,7 @@ class ProjectController extends Controller
 
         if($image){
             if ($project->image_path){
-                Storage::disk('public')->delete($project->image_path)
+                Storage::disk('public')->deleteDirectory(dirname($project->image_path));
             }
            $data['image_path']= $image->store('project/'.Str::random(), 'public');
         }
@@ -130,7 +131,11 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $name = $project->name;
+        if ($project->image_path){
+            Storage::disk('public')->deleteDirectory(dirname($project->image_path));
+        }
         $project->delete();
+
         return to_route('project.index')->with('success','Project "'.$name.'" was deleted successfully');
     }
 }

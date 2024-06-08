@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Task extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'name','description','image_path','status','priority',
+        'due_date','assigned_user_id','created_by','updated_by',
+        'project_id'
+    ];
 
 
     public function project(): BelongsTo
